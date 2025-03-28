@@ -1,4 +1,4 @@
-import { PriorityQueue } from "@/lib/priority-queue"
+import { Heap } from "@/lib/heap"
 import { MOD } from "@/lib/utils"
 
 export class WeightedGraph {
@@ -39,7 +39,7 @@ export class WeightedGraph {
     const previous: (number | null)[] = new Array(numNodes).fill(null)
     const visited: boolean[] = new Array(numNodes).fill(false)
     const ways: number[] = new Array(numNodes).fill(0)
-    const pq = new PriorityQueue<[number, number]>((a, b) => a[0] - b[0])
+    const pq = new Heap<[number, number]>((a, b) => a[0] - b[0])
 
     distances[source] = 0
     ways[source] = 1

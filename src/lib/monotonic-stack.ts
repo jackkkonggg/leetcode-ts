@@ -1,38 +1,29 @@
-export class MonotonicStack<T> {
-  private stack: T[]
-  private comparator: (a: T, b: T) => boolean
+import { Stack } from "@/lib/stack"
 
-  constructor(args: { comparator: (a: T, b: T) => boolean; initial?: T[] }) {
-    this.comparator = args.comparator
-    this.stack = args.initial ?? []
+export class MonotonicStack<T, throwError extends boolean = true> extends Stack<T, throwError> {
+  private defaultComparator: (top: T, item: T) => boolean
+
+  constructor(config: { comparator: (top: T, item: T) => boolean }) {
+    super()
+    this.defaultComparator = config.comparator
   }
 
   push(
     item: T,
-    hooks?: {
-      beforePush?: (stack: MonotonicStack<T>) => void
+    config?: {
+      shouldPop?: (top: T, item: T) => boolean
+      onPop?: (poppedValue: T) => void
+      beforePush?: (stack: MonotonicStack<T, throwError>) => void
+      afterPush?: (item: T) => void
     }
   ): void {
-    while (this.stack.length > 0 && this.comparator(this.stack[this.stack.length - 1], item)) {
-      this.stack.pop()
+    while (this.isNotEmpty() && (config?.shouldPop ?? this.defaultComparator)(super.top()!, item)) {
+      const top = super.pop()!
+      config?.onPop?.(top)
     }
-    hooks?.beforePush?.(this)
-    this.stack.push(item)
-  }
 
-  pop(): T | undefined {
-    return this.stack.pop()
-  }
-
-  top(): T | undefined {
-    return this.stack[this.stack.length - 1]
-  }
-
-  isEmpty(): boolean {
-    return this.stack.length === 0
-  }
-
-  getStack(): T[] {
-    return this.stack
+    config?.beforePush?.(this)
+    super.push(item)
+    config?.afterPush?.(item)
   }
 }

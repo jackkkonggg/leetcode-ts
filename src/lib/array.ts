@@ -1,4 +1,4 @@
-export class ArrayUtils {
+class ArrayUtils {
   // Generates a prefix max array, prefix_max[i] is the maximum of nums[0], nums[1], ..., nums[i].
   static prefixMax(nums: number[]): number[] {
     let max = Number.MIN_SAFE_INTEGER
@@ -42,4 +42,23 @@ export class ArrayUtils {
     }
     return arr
   }
+
+  static generateSubsets<T>(nums: T[]): T[][] {
+    const n = nums.length
+    const subsets: T[][] = []
+
+    for (let i = 0; i < 1 << n; ++i) {
+      const subset: T[] = []
+      for (let j = 0; j < n; ++j) {
+        if (i & (1 << j)) {
+          subset.push(nums[j])
+        }
+      }
+      subsets.push(subset)
+    }
+
+    return subsets
+  }
 }
+
+export { ArrayUtils }
